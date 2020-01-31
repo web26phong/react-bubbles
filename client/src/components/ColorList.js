@@ -21,18 +21,25 @@ const ColorList = ({ colors, updateColors }) => {
     axiosWithAuth()
     .put(`/colors/${colorToEdit.id}`, colorToEdit)
     .then(res=>{
-      // console.log(res)
-      // const newArray = [...colors]
-      // const newArray2 = newArray.filter(item => item.color !== res.data.color)
-      // updateColors(newArray2)
-      axiosWithAuth()
-      .get(`/colors`)
-      .then(res=>{
-        updateColors(res.data)
-      })
-      .catch(err=>{
-        console.log(err)
-      })
+      const newArray = [...colors]
+      
+      const index = newArray.findIndex(item => item.id === res.data.id);
+      const newArray2 = [...newArray.slice(0,index),
+        {
+          ...newArray[index],
+          color: res.data.color
+        },
+        ...newArray.slice(index+1)
+      ]
+      updateColors(newArray2)
+      // axiosWithAuth()
+      // .get(`/colors`)
+      // .then(res=>{
+      //   updateColors(res.data)
+      // })
+      // .catch(err=>{
+      //   console.log(err)
+      // })
     })
     .catch(err=>{
       console.log(err)
@@ -43,7 +50,6 @@ const ColorList = ({ colors, updateColors }) => {
     axiosWithAuth()
     .delete(`/colors/${color.id}`)
     .then(res=>{
-      console.log(colors.indexOf(color))
       const newArray = [...colors];
       if (colors.indexOf(color) > -1){
         newArray.splice(colors.indexOf(color), 1)
