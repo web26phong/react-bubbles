@@ -6,8 +6,6 @@ const Login = (props) => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  console.log(username, password)
-
   const handleUserChanges = e => {
     setUsername(e.target.value);
 }
