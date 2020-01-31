@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import {useHistory} from "react-router-dom";
 import {axiosWithAuth} from "../utils/axiosWithAuth";
 import axios from "axios";
 
@@ -11,7 +10,6 @@ const initialColor = {
 const ColorList = ({ colors, updateColors }) => {
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
-  const history = useHistory();
 
   const editColor = color => {
     setEditing(true);
@@ -23,6 +21,10 @@ const ColorList = ({ colors, updateColors }) => {
     axiosWithAuth()
     .put(`/colors/${colorToEdit.id}`, colorToEdit)
     .then(res=>{
+      // console.log(res)
+      // const newArray = [...colors]
+      // const newArray2 = newArray.filter(item => item.color !== res.data.color)
+      // updateColors(newArray2)
       axiosWithAuth()
       .get(`/colors`)
       .then(res=>{
@@ -41,14 +43,20 @@ const ColorList = ({ colors, updateColors }) => {
     axiosWithAuth()
     .delete(`/colors/${color.id}`)
     .then(res=>{
-      axiosWithAuth()
-      .get(`/colors`)
-      .then(res=>{
-        updateColors(res.data)
-      })
-      .catch(err=>{
-        console.log(err)
-      })
+      console.log(colors.indexOf(color))
+      const newArray = [...colors];
+      if (colors.indexOf(color) > -1){
+        newArray.splice(colors.indexOf(color), 1)
+      }
+      updateColors(newArray);
+      // axiosWithAuth()
+      // .get(`/colors`)
+      // .then(res=>{
+      //   updateColors(res.data)
+      // })
+      // .catch(err=>{
+      //   console.log(err)
+      // })
     })
     .catch(err=>{
       console.log(err)
