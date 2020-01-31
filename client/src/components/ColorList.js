@@ -17,17 +17,20 @@ const ColorList = ({ colors, updateColors }) => {
   };
 
   const saveEdit = e => {
+    console.log(colors)
     e.preventDefault();
     axiosWithAuth()
     .put(`/colors/${colorToEdit.id}`, colorToEdit)
     .then(res=>{
       const newArray = [...colors]
+      console.log(res.data)
       
       const index = newArray.findIndex(item => item.id === res.data.id);
       const newArray2 = [...newArray.slice(0,index),
         {
           ...newArray[index],
-          color: res.data.color
+          color: res.data.color,
+          code: { hex: res.data.code.hex}
         },
         ...newArray.slice(index+1)
       ]
