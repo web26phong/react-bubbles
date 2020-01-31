@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {axiosWithAuth} from "../utils/axiosWithAuth";
 import axios from "axios";
 
 const initialColor = {
@@ -7,7 +8,6 @@ const initialColor = {
 };
 
 const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
@@ -17,14 +17,59 @@ const ColorList = ({ colors, updateColors }) => {
   };
 
   const saveEdit = e => {
+    console.log(colors)
     e.preventDefault();
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
+    axiosWithAuth()
+    .put(`/colors/${colorToEdit.id}`, colorToEdit)
+    .then(res=>{
+      const newArray = [...colors]
+      console.log(res.data)
+      
+      const index = newArray.findIndex(item => item.id === res.data.id);
+      const newArray2 = [...newArray.slice(0,index),
+        {
+          ...newArray[index],
+          color: res.data.color,
+          code: { hex: res.data.code.hex}
+        },
+        ...newArray.slice(index+1)
+      ]
+      updateColors(newArray2)
+      // axiosWithAuth()
+      // .get(`/colors`)
+      // .then(res=>{
+      //   updateColors(res.data)
+      // })
+      // .catch(err=>{
+      //   console.log(err)
+      // })
+    })
+    .catch(err=>{
+      console.log(err)
+    })
   };
 
   const deleteColor = color => {
-    // make a delete request to delete this color
+    axiosWithAuth()
+    .delete(`/colors/${color.id}`)
+    .then(res=>{
+      const newArray = [...colors];
+      if (colors.indexOf(color) > -1){
+        newArray.splice(colors.indexOf(color), 1)
+      }
+      updateColors(newArray);
+      // axiosWithAuth()
+      // .get(`/colors`)
+      // .then(res=>{
+      //   updateColors(res.data)
+      // })
+      // .catch(err=>{
+      //   console.log(err)
+      // })
+    })
+    .catch(err=>{
+      console.log(err)
+    })
   };
 
   return (
